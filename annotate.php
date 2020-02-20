@@ -21,13 +21,17 @@ $OUTPUT->header();
 $OUTPUT->bodyStart();
 $OUTPUT->topNav();
 $OUTPUT->flashMessages();
-
 ?>
+<div style="float:right;">
+<a href="index.php" class="btn btn-primary">Edit</a>
+</div>
+
     <div id="spinner"><img src="<?= $OUTPUT->getSpinnerUrl() ?>"/></div>
     <div id="output_div" style="display: none;">
     </div>
 <?php
 $OUTPUT->footerStart();
+// https://github.com/jitbit/HtmlSanitizer
 ?>
 <script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
 <script src="annotator-full.1.2.10/annotator-full.min.js"></script>

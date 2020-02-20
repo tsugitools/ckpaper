@@ -42,11 +42,7 @@ $OUTPUT->topNav();
 
 if ( $USER->instructor ) {
     echo('<div style="float:right;">');
-    echo('<a href="load_text.php" target="_blank">Test</a>');
-    echo('<a href="annotate.php" target="_blank">Annotate</a>');
-    echo('<form method="post" style="display: inline">');
-    echo('<input type="submit" class="btn btn-warning" name="clear" value="'.__('Clear data').'">');
-    echo("</form>\n");
+    echo('<a href="annotate.php" class="btn btn-primary">Annotate</a>');
     SettingsForm::button(false);
     echo('</div>');
 
