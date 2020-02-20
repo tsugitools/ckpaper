@@ -35,10 +35,6 @@ if ( U::get($_POST, 'content') ) {
 
 // Render view
 $OUTPUT->header();
-?>
-    <script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/16.0.0/classic/ckeditor.js"></script>
-<?php
 // https://github.com/jitbit/HtmlSanitizer
 
 $OUTPUT->bodyStart();
@@ -47,6 +43,7 @@ $OUTPUT->topNav();
 if ( $USER->instructor ) {
     echo('<div style="float:right;">');
     echo('<a href="load_text.php" target="_blank">Test</a>');
+    echo('<a href="annotate.php" target="_blank">Annotate</a>');
     echo('<form method="post" style="display: inline">');
     echo('<input type="submit" class="btn btn-warning" name="clear" value="'.__('Clear data').'">');
     echo("</form>\n");
@@ -79,6 +76,8 @@ echo("<!-- Classic single-file version of the tool -->\n");
 <?php
 $OUTPUT->footerStart();
 ?>
+<script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/16.0.0/classic/ckeditor.js"></script>
 <script type="text/javascript">
 $(document).ready( function () {
     $.get('<?= addSession('load_text.php') ?>', function(data) {
@@ -86,6 +85,7 @@ $(document).ready( function () {
       var html = HtmlSanitizer.SanitizeHtml(data);
       console.log(html);
       $('#editor').html(html);
+      $('#output_div').html(html);
       ClassicEditor
             .create( document.querySelector( '#editor' ) ,
                 {
