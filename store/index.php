@@ -15,8 +15,36 @@ if ( ! isset($pieces->controller) || strlen($pieces->controller) < 1 ) {
 $_GET[session_name()] = $pieces->controller;
 $LAUNCH = LTIX::requireData();
 
-echo("<pre>\n");
-var_dump($LAUNCH);
+// http://docs.annotatorjs.org/en/v1.2.x/storage.html#core-storage-api
+if ( strlen($pieces->action) < 1 ) {
+    $retval = array(
+          "name" => "Annotator Store API",
+          "version" => "2.0.0",
+          "author" => "Charles R. Severance"
+    );
+    header('Content-Type: application/json; charset=utf-8');
+    echo(json_encode($retval, JSON_PRETTY_PRINT));
+    return;
+}
+
+if ( ! trim($pieces->action) == 'annotations' ) {
+    http_response_code(404);
+    die("Expecting 'session-id/annotations'");
+}
+    
+
+if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
+    $annotations = $LAUNCH->result->getJsonKey('annotations', '[ ]');
+    $retval = json_decode($annotations);
+    if ( ! is_array($retval) ) $retval = array();
+    header('Content-Type: application/json; charset=utf-8');
+    echo(json_encode($retval, JSON_PRETTY_PRINT));
+    return;
+}
+
+http_response_code(405);
+die("Working on the rest...");
+
 
 
 /*
