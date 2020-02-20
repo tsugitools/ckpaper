@@ -21,10 +21,10 @@ if ( SettingsForm::handleSettingsPost() ) {
 
 // Handle Post Data
 $p = $CFG->dbprefix;
-$old_content = $LAUNCH->link->getJsonKey('content', '');
+$old_content = $LAUNCH->result->getJsonKey('content', '');
 
 if ( U::get($_POST, 'content') ) {
-    $LAUNCH->link->setJsonKey('content', U::get($_POST, 'content') );
+    $LAUNCH->result->setJsonKey('content', U::get($_POST, 'content') );
     $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
             array(':LI' => $LINK->id)
     );
@@ -36,13 +36,17 @@ if ( U::get($_POST, 'content') ) {
 // Render view
 $OUTPUT->header();
 ?>
+    <script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/16.0.0/classic/ckeditor.js"></script>
 <?php
+// https://github.com/jitbit/HtmlSanitizer
+
 $OUTPUT->bodyStart();
 $OUTPUT->topNav();
 
 if ( $USER->instructor ) {
     echo('<div style="float:right;">');
+    echo('<a href="load_text.php" target="_blank">Test</a>');
     echo('<form method="post" style="display: inline">');
     echo('<input type="submit" class="btn btn-warning" name="clear" value="'.__('Clear data').'">');
     echo("</form>\n");
@@ -55,8 +59,6 @@ if ( $USER->instructor ) {
     echo("<p>Configure the LTI Tool<p>\n");
     SettingsForm::text('code',__('Code'));
     SettingsForm::checkbox('grade',__('Send a grade'));
-    SettingsForm::text('match',__('This can be a prefix of an IP address like "142.16.41" or if it starts with a "/" it can be a regular expression (PHP syntax)'));
-    echo("<p>Your current IP address is ".htmlentities(Net::getIP())."</p>\n");
     SettingsForm::done();
     SettingsForm::end();
 }
@@ -66,22 +68,39 @@ $OUTPUT->flashMessages();
 echo("<!-- Classic single-file version of the tool -->\n");
 
 ?>
+    <div id="spinner"><img src="<?= $OUTPUT->getSpinnerUrl() ?>"/></div>
+    <div id="editor_div" style="display: none;">
     <form method="post">
         <textarea name="content" id="editor">
-<?= $old_content ?>
         </textarea>
         <p><input type="submit" value="Submit"></p>
     </form>
-    <script>
-        var editor = ClassicEditor
+    </div>
+<?php
+$OUTPUT->footerStart();
+?>
+<script type="text/javascript">
+$(document).ready( function () {
+    $.get('<?= addSession('load_text.php') ?>', function(data) {
+      console.log(data);
+      var html = HtmlSanitizer.SanitizeHtml(data);
+      console.log(html);
+      $('#editor').html(html);
+      ClassicEditor
             .create( document.querySelector( '#editor' ) ,
                 {
                 }
             ).then(editor => { 
-                editor.isReadOnly = true;
+                // editor.isReadOnly = true;
+                $('#spinner').hide();
+                $('#editor_div').show();
             } ).catch( error => {
                 console.error( error );
             } );
-    </script>
+    })
+  }
+);
+</script>
 <?php
-$OUTPUT->footer();
+$OUTPUT->footerEnd();
+
