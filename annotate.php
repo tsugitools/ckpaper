@@ -16,7 +16,7 @@ $LAUNCH = LTIX::requireData();
 // Render view
 $OUTPUT->header();
 ?>
-<link rel="stylesheet" href="annotator-full.1.2.10/annotator.min.css" />
+<link rel="stylesheet" href="<?= $CFG->staticroot ?>/js/annotator-full.1.2.10/annotator.min.css" />
 <?php
 $OUTPUT->bodyStart();
 $OUTPUT->topNav();
@@ -34,7 +34,7 @@ $OUTPUT->footerStart();
 // https://github.com/jitbit/HtmlSanitizer
 ?>
 <script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
-<script src="annotator-full.1.2.10/annotator-full.min.js"></script>
+<script src="<?= $CFG->staticroot ?>/js/annotator-full.1.2.10/annotator-full.min.js"></script>
 <script type="text/javascript">
 $(document).ready( function () {
     $.get('<?= addSession('load_text.php') ?>', function(data) {
