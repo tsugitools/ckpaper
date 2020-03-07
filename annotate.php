@@ -54,8 +54,9 @@ $(document).ready( function () {
       .annotator('setupPlugins', {} , {
          Tags: false,
          Filter: false,
-         Store:
-            { prefix: '<?= $api_endpoint ?>'},
+         Store: {
+            prefix: '<?= $api_endpoint ?>'
+         },
          Auth:
             { tokenUrl: false }
           }
