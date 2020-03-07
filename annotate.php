@@ -32,6 +32,8 @@ $OUTPUT->flashMessages();
 <?php
 $OUTPUT->footerStart();
 // https://github.com/jitbit/HtmlSanitizer
+$pieces = U::rest_path();
+$api_endpoint = $pieces->parent . '/store/' . session_id();
 ?>
 <script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
 <script src="<?= $CFG->staticroot ?>/js/annotator-full.1.2.10/annotator-full.min.js"></script>
@@ -40,15 +42,28 @@ $(document).ready( function () {
     $.get('<?= addSession('load_text.php') ?>', function(data) {
       var html = HtmlSanitizer.SanitizeHtml(data);
       $('#output_div').html(html);
-       $('#spinner').hide();
-       $('#output_div').show();
-       var ann = new Annotator(jQuery('#output_div'));
-       ann.startPlugins();
-       console.log('Annotator started');
+      $('#spinner').hide();
+      $('#output_div').show();
+      console.log('new app...');
+      // Annotator.Plugin.Store.prefix = '<?= $api_endpoint ?>';
+      console.log(Annotator);
+      Annotator.Plugin.Store.prototype.options['prefix'] = '<?= $api_endpoint ?>';
+      Annotator.Plugin.Auth.prototype.options['autoFetch'] = false;
+
+      $('#output_div').annotator()
+      .annotator('setupPlugins', {} , {
+         Tags: false,
+         Filter: false,
+         Store:
+            { prefix: '<?= $api_endpoint ?>'},
+         Auth:
+            { tokenUrl: false }
+          }
+      );
+      console.log('Annotator started');
     })
   }
 );
 </script>
 <?php
 $OUTPUT->footerEnd();
-

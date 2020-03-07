@@ -8,7 +8,9 @@ require_once "../../config.php";
 $pieces = U::rest_path();
 if ( ! isset($pieces->controller) || strlen($pieces->controller) < 1 ) {
     http_response_code(500);
-    die("missing session");
+    echo("<pre>\nMissing Session\n\n");
+    echo(htmlentities(print_r($pieces, TRUE)));
+    die();
 }
 
 // Force the session ID REST style :)
