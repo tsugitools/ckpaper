@@ -34,8 +34,23 @@ if ( ! trim($pieces->action) == 'annotations' ) {
     die("Expecting 'session-id/annotations'");
 }
     
+if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+    $annotations = $LAUNCH->result->getJsonKey('annotations', '[ ]');
+    $annotations = json_decode($annotations);
+    $input = file_get_contents('php://input');
+    $json = json_decode($input);
+    $json->id = uniqid();
+    $annotations[] = $json;
+    $annotations = json_encode($annotations);
+    $LAUNCH->result->setJsonKey('annotations', $annotations);
+    $location = $pieces->current . '/annotations/' . $json->id;
+    http_response_code(303);
+    header('Location: '.$location);
+    echo(json_encode($json, JSON_PRETTY_PRINT));
+    return;
+}
 
-if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
+if ( $_SERVER['REQUEST_METHOD'] === 'GET' && count($pieces->parameters) < 1 ) {
     $annotations = $LAUNCH->result->getJsonKey('annotations', '[ ]');
     $retval = json_decode($annotations);
     if ( ! is_array($retval) ) $retval = array();
@@ -44,6 +59,22 @@ if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
     return;
 }
 
+if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
+    $annotations = $LAUNCH->result->getJsonKey('annotations', '[ ]');
+    $annotations = json_decode($annotations);
+    $id = $pieces->parameters[0];
+    foreach($annotations as $annotation) {
+        if ( $id == $annotation->id ) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo(json_encode($annotation, JSON_PRETTY_PRINT));
+            return;
+        }
+    }
+    http_response_code(404);
+    return;
+}
+
+var_dump($pieces);
 http_response_code(405);
 die("Working on the rest...");
 
