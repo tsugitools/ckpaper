@@ -37,9 +37,24 @@ if ( ! trim($pieces->action) == 'annotations' ) {
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
     $annotations = $LAUNCH->result->getJsonKey('annotations', '[ ]');
     $annotations = json_decode($annotations);
+    if ( ! is_array($annotations) ) $annotations = array();
     $input = file_get_contents('php://input');
     $json = json_decode($input);
     $json->id = uniqid();
+    $user = new \stdClass();
+    $user->id = $LAUNCH->user->id;
+    $user->name = "Alice";
+    $user->email = "alice@email.com";
+    $json->user = $user;
+
+    $permlist = array("group:__world__");
+    $permissions = array(
+        "read" => $permlist,
+        "update" => $permlist,
+        "delete" => $permlist,
+    );
+    $json->permissions = $permissions;
+
     $annotations[] = $json;
     $annotations = json_encode($annotations);
     $LAUNCH->result->setJsonKey('annotations', $annotations);
@@ -62,6 +77,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'GET' && count($pieces->parameters) < 1 ) {
 if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
     $annotations = $LAUNCH->result->getJsonKey('annotations', '[ ]');
     $annotations = json_decode($annotations);
+    if ( ! is_array($annotations) ) $annotations = array();
     $id = $pieces->parameters[0];
     foreach($annotations as $annotation) {
         if ( $id == $annotation->id ) {
@@ -71,6 +87,58 @@ if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
         }
     }
     http_response_code(404);
+    return;
+}
+
+if ( $_SERVER['REQUEST_METHOD'] === 'PUT' ) {
+    $annotations = $LAUNCH->result->getJsonKey('annotations', '[ ]');
+    $annotations = json_decode($annotations);
+    if ( ! is_array($annotations) ) $annotations = array();
+
+    $input = file_get_contents('php://input');
+    $json = json_decode($input);
+    $permlist = array("group:__world__");
+    $permissions = array(
+        "read" => $permlist,
+        "update" => $permlist,
+        "delete" => $permlist,
+    );
+    $json->permissions = $permissions;
+    $id = $pieces->parameters[0];
+    for($i=0; $i<count($annotations); $i++) {
+        $annotation = $annotations[$i];
+        if ( $id == $annotation->id ) {
+            $annotations[$i] = $json;
+        }
+    }
+    $annotations = json_encode($annotations);
+    $LAUNCH->result->setJsonKey('annotations', $annotations);
+    $location = $pieces->current . '/annotations/' . $id;
+    http_response_code(303);
+    header('Location: '.$location);
+    return;
+}
+
+if ( $_SERVER['REQUEST_METHOD'] === 'DELETE' ) {
+    $annotations = $LAUNCH->result->getJsonKey('annotations', '[ ]');
+    $annotations = json_decode($annotations);
+    if ( ! is_array($annotations) ) $annotations = array();
+
+    $id = $pieces->parameters[0];
+    $found = false;
+    for($i=0; $i<count($annotations); $i++) {
+        $annotation = $annotations[$i];
+        if ( $id == $annotation->id ) {
+            $found = $i;
+        }
+    }
+    if ( $found !== false ) {
+        unset($annotations[$found]);
+        $annotations = array_values($annotations);
+    }
+    $annotations = json_encode($annotations);
+    $LAUNCH->result->setJsonKey('annotations', $annotations);
+    http_response_code(204);
     return;
 }
 

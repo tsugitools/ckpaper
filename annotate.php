@@ -22,9 +22,11 @@ $OUTPUT->bodyStart();
 $OUTPUT->topNav();
 $OUTPUT->flashMessages();
 ?>
+<!--
 <div style="float:right;">
 <a href="index.php" class="btn btn-primary">Edit</a>
 </div>
+-->
 
     <div id="spinner"><img src="<?= $OUTPUT->getSpinnerUrl() ?>"/></div>
     <div id="output_div" style="display: none;">
@@ -47,20 +49,19 @@ $(document).ready( function () {
       console.log('new app...');
       // Annotator.Plugin.Store.prefix = '<?= $api_endpoint ?>';
       console.log(Annotator);
-      Annotator.Plugin.Store.prototype.options['prefix'] = '<?= $api_endpoint ?>';
-      Annotator.Plugin.Auth.prototype.options['autoFetch'] = false;
+      // Annotator.Plugin.Store.prototype.options['prefix'] = '<?= $api_endpoint ?>';
+      // Annotator.Plugin.Auth = false;
 
       $('#output_div').annotator()
       .annotator('setupPlugins', {} , {
+         Auth: false,
          Tags: false,
          Filter: false,
          Store: {
-            prefix: '<?= $api_endpoint ?>'
-         },
-         Auth:
-            { tokenUrl: false }
-          }
-      );
+            prefix: '<?= $api_endpoint ?>',
+            loadFromSearch: false
+         }
+      } );
       console.log('Annotator started');
     })
   }
