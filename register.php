@@ -1,10 +1,10 @@
 <?php
 
 $REGISTER_LTI2 = array(
-"name" => "Grading Papers",
+"name" => "Grade Papers",
 "FontAwesome" => "fa-align-left",
 "short_name" => "CKPaper",
-"description" => "A tool to turn in papers using a browser editor(CKEditor 5.0), and allow those papers to be graded.",
+"description" => "A tool to write and turn in papers using a browser editor(CKEditor 5.0), and allow those papers to be annotated and graded.",
     // By default, accept launch messages..
     "messages" => array("launch"),
     "privacy_level" => "name_only",  // anonymous, name_only, public
