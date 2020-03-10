@@ -22,11 +22,9 @@ $OUTPUT->bodyStart();
 $OUTPUT->topNav();
 $OUTPUT->flashMessages();
 ?>
-<!--
-<div style="float:right;">
-<a href="index.php" class="btn btn-primary">Edit</a>
-</div>
--->
+<button onclick="window.location.href = '<?= addSession('index.php') ?>';"
+style="position: fixed; border-radius: 4px; border: 4px solid darkblue; z-index: 10000; color: white; background-color: #008CBA;
+ font-size: 16px; right:20px;  padding: 10px 16px;">Edit</button>
 
     <div id="spinner"><img src="<?= $OUTPUT->getSpinnerUrl() ?>"/></div>
     <div id="output_div" style="display: none;">
@@ -35,7 +33,8 @@ $OUTPUT->flashMessages();
 $OUTPUT->footerStart();
 // https://github.com/jitbit/HtmlSanitizer
 $pieces = U::rest_path();
-$api_endpoint = $pieces->parent . '/store/' . session_id();
+// $api_endpoint = $pieces->parent . '/store/' . session_id();
+$api_endpoint = $CFG->wwwroot . '/api/annotate/' . session_id();
 ?>
 <script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
 <script src="<?= $CFG->staticroot ?>/js/annotator-full.1.2.10/annotator-full.min.js"></script>
