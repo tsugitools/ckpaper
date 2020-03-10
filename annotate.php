@@ -34,7 +34,7 @@ $OUTPUT->footerStart();
 // https://github.com/jitbit/HtmlSanitizer
 $pieces = U::rest_path();
 // $api_endpoint = $pieces->parent . '/store/' . session_id();
-$api_endpoint = $CFG->wwwroot . '/api/annotate/' . session_id();
+$api_endpoint = $CFG->wwwroot . '/api/annotate/' . session_id() . ':' . $LAUNCH->result->id;
 ?>
 <script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
 <script src="<?= $CFG->staticroot ?>/js/annotator-full.1.2.10/annotator-full.min.js"></script>
