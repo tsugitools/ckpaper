@@ -34,16 +34,18 @@ if ( U::get($_POST, 'content') ) {
 } 
 
 $menu = new \Tsugi\UI\MenuSet();
+$menu->addLeft(__('Annotations'), 'annotate');
 
 if ( $USER->instructor ) {
-    $menu->addLeft('Student Data', 'grades');
     $submenu = new \Tsugi\UI\Menu();
-    $submenu->addLink('Settings', '#', /* push */ false, SettingsForm::attr());
-    $submenu->addLink('Annotate', 'annotate');
+    $submenu->addLink(__('Student Data'), 'grades');
+    $submenu->addLink(__('Settings'), '#', /* push */ false, SettingsForm::attr());
     if ( $CFG->launchactivity ) {
-        $submenu->addLink('Analytics', 'analytics');
+        $submenu->addLink(__('Analytics'), 'analytics');
     }
-    $menu->addRight('Instructor', $submenu);
+    $menu->addRight(__('Instructor'), $submenu);
+} else {
+    $menu->addRight(__('Settings'), '#', /* push */ false, SettingsForm::attr());
 }
 
 
@@ -57,14 +59,11 @@ $OUTPUT->topNav($menu);
 $OUTPUT->welcomeUserCourse();
 $OUTPUT->flashMessages();
 
-if ( $USER->instructor ) {
-    SettingsForm::start();
-    echo("<p>Configure the LTI Tool<p>\n");
-    SettingsForm::text('code',__('Code'));
-    SettingsForm::checkbox('grade',__('Send a grade'));
-    SettingsForm::done();
-    SettingsForm::end();
-}
+SettingsForm::start();
+SettingsForm::text('code',__('Code'));
+SettingsForm::checkbox('grade',__('Send a grade'));
+SettingsForm::done();
+SettingsForm::end();
 
 ?>
     <div id="spinner"><img src="<?= $OUTPUT->getSpinnerUrl() ?>"/></div>
