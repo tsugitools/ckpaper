@@ -5,19 +5,15 @@ require_once "../config.php";
 // http://do1.dr-chuck.com/tsugi/phpdoc/
 
 use \Tsugi\Util\U;
-use \Tsugi\Util\Net;
 use \Tsugi\Core\LTIX;
-use \Tsugi\Core\Settings;
-use \Tsugi\UI\SettingsForm;
+use \Tsugi\UI\Annotate;
 
 // No parameter means we require CONTEXT, USER, and LINK
 $LAUNCH = LTIX::requireData();
 
 // Render view
 $OUTPUT->header();
-?>
-<link rel="stylesheet" href="<?= $CFG->staticroot ?>/js/annotator-full.1.2.10/annotator.min.css" />
-<?php
+echo(Annotate::header());
 $OUTPUT->bodyStart();
 $OUTPUT->topNav();
 $OUTPUT->flashMessages();
@@ -31,13 +27,10 @@ style="position: fixed; border-radius: 4px; border: 4px solid darkblue; z-index:
     </div>
 <?php
 $OUTPUT->footerStart();
+echo(Annotate::footer($LAUNCH));
 // https://github.com/jitbit/HtmlSanitizer
-$pieces = U::rest_path();
-// $api_endpoint = $pieces->parent . '/store/' . session_id();
-$api_endpoint = $CFG->wwwroot . '/api/annotate/' . session_id() . ':' . $LAUNCH->result->id;
 ?>
 <script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
-<script src="<?= $CFG->staticroot ?>/js/annotator-full.1.2.10/annotator-full.min.js"></script>
 <script type="text/javascript">
 $(document).ready( function () {
     $.get('<?= addSession('load_text.php') ?>', function(data) {
@@ -45,23 +38,7 @@ $(document).ready( function () {
       $('#output_div').html(html);
       $('#spinner').hide();
       $('#output_div').show();
-      console.log('new app...');
-      // Annotator.Plugin.Store.prefix = '<?= $api_endpoint ?>';
-      console.log(Annotator);
-      // Annotator.Plugin.Store.prototype.options['prefix'] = '<?= $api_endpoint ?>';
-      // Annotator.Plugin.Auth = false;
-
-      $('#output_div').annotator()
-      .annotator('setupPlugins', {} , {
-         Auth: false,
-         Tags: false,
-         Filter: false,
-         Store: {
-            prefix: '<?= $api_endpoint ?>',
-            loadFromSearch: false
-         }
-      } );
-      console.log('Annotator started');
+      tsugiStartAnnotation('#output_div');
     })
   }
 );
