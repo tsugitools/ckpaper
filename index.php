@@ -33,21 +33,31 @@ if ( U::get($_POST, 'content') ) {
     return;
 } 
 
+$menu = new \Tsugi\UI\MenuSet();
+
+if ( $USER->instructor ) {
+    $menu->addLeft('Student Data', 'grades');
+    $submenu = new \Tsugi\UI\Menu();
+    $submenu->addLink('Settings', '#', /* push */ false, SettingsForm::attr());
+    $submenu->addLink('Annotate', 'annotate');
+    if ( $CFG->launchactivity ) {
+        $submenu->addLink('Analytics', 'analytics');
+    }
+    $menu->addRight('Instructor', $submenu);
+}
+
+
+
 // Render view
 $OUTPUT->header();
 // https://github.com/jitbit/HtmlSanitizer
 
 $OUTPUT->bodyStart();
-$OUTPUT->topNav();
+$OUTPUT->topNav($menu);
+$OUTPUT->welcomeUserCourse();
+$OUTPUT->flashMessages();
 
 if ( $USER->instructor ) {
-    echo('<div style="float:right;">');
-    echo('<a href="annotate.php" class="btn btn-primary">Annotate</a>');
-    SettingsForm::button(false);
-    echo('</div>');
-
-    $OUTPUT->welcomeUserCourse();
-    echo('<br clear="all">');
     SettingsForm::start();
     echo("<p>Configure the LTI Tool<p>\n");
     SettingsForm::text('code',__('Code'));
@@ -55,10 +65,6 @@ if ( $USER->instructor ) {
     SettingsForm::done();
     SettingsForm::end();
 }
-
-$OUTPUT->flashMessages();
-
-echo("<!-- Classic single-file version of the tool -->\n");
 
 ?>
     <div id="spinner"><img src="<?= $OUTPUT->getSpinnerUrl() ?>"/></div>
