@@ -17,6 +17,7 @@ if ( $user_id && ! $LAUNCH->user->instructor ) {
     http_response_code(404);
     die('Not authorized');
 }
+if ( ! $user_id ) $user_id = $LAUNCH->user->id;
 
 $back_text = __('Back');
 $load_url = $user_id ? 'load_text.php?user_id=' . $user_id : 'load_text.php';
@@ -37,7 +38,7 @@ $OUTPUT->flashMessages();
     </div>
 <?php
 $OUTPUT->footerStart();
-echo(Annotate::footer($LAUNCH));
+echo(Annotate::footer($user_id));
 // https://github.com/jitbit/HtmlSanitizer
 ?>
 <script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
