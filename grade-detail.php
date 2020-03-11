@@ -29,7 +29,7 @@ $row = GradeUtil::gradeLoad($user_id);
 
 $annotations = Annotate::loadAnnotations($LAUNCH, $user_id);
 
-$inst_note = $LAUNCH->result->getJsonKeyForUser('inst_note', '', $user_id);
+$inst_note = $LAUNCH->result->getNote($user_id);
 $gradeurl = Table::makeUrl('grade-detail.php', $getparms);
 $gradesurl = Table::makeUrl('grades.php', $getparms);
 
@@ -37,7 +37,7 @@ $gradesurl = Table::makeUrl('grades.php', $getparms);
 if ( isset($_POST['instSubmit']) || isset($_POST['instSubmitAdvance']) ) {
 
     $inst_note = U::get($_POST, 'inst_note');
-    $LAUNCH->result->setJsonKeyForUser('inst_note', U::get($_POST, 'inst_note'), $user_id );
+    $LAUNCH->result->setNote(U::get($_POST, 'inst_note'), $user_id );
 
     $points = U::get($_POST, 'grade');
     if ( strlen($points) == 0 || $points === null ) {
@@ -88,7 +88,7 @@ if ( $annotations ) {
 
 $next_user_id_ungraded = false;
 
-$inst_note = $LAUNCH->result->getJsonKeyForUser('inst_note', $user_id);
+$inst_note = $LAUNCH->result->getNote($user_id);
 
 echo('<form method="post">
       <input type="hidden" name="user_id" value="'.$user_id.'">');

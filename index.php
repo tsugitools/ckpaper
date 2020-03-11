@@ -21,7 +21,7 @@ if ( $user_id && ! $LAUNCH->user->instructor ) {
 }
 if ( ! $user_id ) $user_id = $LAUNCH->user->id;
 
-$inst_note = $LAUNCH->result->getJsonKeyForUser('inst_note', $user_id );
+$inst_note = $LAUNCH->result->getNote($user_id );
 
 $edit_text = __('Edit');
 if ( $next != 'edit.php' ) $edit_text = __('Back');
