@@ -21,6 +21,8 @@ if ( $user_id && ! $LAUNCH->user->instructor ) {
 }
 if ( ! $user_id ) $user_id = $LAUNCH->user->id;
 
+$inst_note = $LAUNCH->result->getJsonKeyForUser('inst_note', $user_id );
+
 $edit_text = __('Edit');
 if ( $next != 'edit.php' ) $edit_text = __('Back');
 $load_url = $user_id ? 'load_text.php?user_id=' . $user_id : 'load_text.php';
@@ -38,10 +40,10 @@ if ( $LAUNCH->user->instructor ) {
     $menu->addRight(__('Help'), '#', /* push */ false, 'data-toggle="modal" data-target="#helpModal"');
     $menu->addRight(__('Instructor'), $submenu, /* push */ false);
 } else {
+    if ( strlen($inst_note) > 0 ) $menu->addRight(__('Note'), '#', /* push */ false, 'data-toggle="modal" data-target="#noteModal"');
     $menu->addRight(__('Help'), '#', /* push */ false, 'data-toggle="modal" data-target="#helpModal"');
     $menu->addRight(__('Settings'), '#', /* push */ false, SettingsForm::attr());
 }
-
 
 $old_content = $LAUNCH->result->getJsonKey('content', '');
 
@@ -53,14 +55,17 @@ $OUTPUT->topNav($menu);
 $OUTPUT->flashMessages();
 
 SettingsForm::start();
-SettingsForm::text('code',__('Code'));
-SettingsForm::checkbox('grade',__('Send a grade'));
+SettingsForm::checkbox('sendgrade',__('Send a grade'));
 SettingsForm::done();
 SettingsForm::end();
 
 $OUTPUT->helpModal("Annotation Tool",
-    "You can edit and annotate formatted text with this tool.  Your teacher also annotate your document.
+    "You can edit and annotate formatted text with this tool.  Your teacher can also annotate your document.
     To annotate, simply highlight text and an edit dialog will pop up so you can add, edit, or delete a comment.");
+
+if ( strlen($inst_note) > 0 ) {
+    echo($OUTPUT->modalString(__("Instructor Note"), htmlentities($inst_note), "noteModal"));
+}
 
 if ( strlen($old_content) < 1 ) {
     $OUTPUT->welcomeUserCourse();
