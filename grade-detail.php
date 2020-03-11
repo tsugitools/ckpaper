@@ -80,7 +80,7 @@ $OUTPUT->flashMessages();
 GradeUtil::gradeShowInfo($row, false);
 
 if ( $annotations ) {
-    $next = "grade-detail.php?user_id=".$user_id;
+    $next = Table::makeUrl('grade-detail.php', $getparms);
     echo('<p><a href="index.php?user_id='.$user_id.'&next='.urlencode($next).'">');
     echo(__('View / Annotate Submission'));
     echo("</a><p>\n");
