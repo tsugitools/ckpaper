@@ -22,7 +22,7 @@ if ( $user_id && ! $LAUNCH->user->instructor ) {
 if ( ! $user_id ) $user_id = $LAUNCH->user->id;
 
 $edit_text = __('Edit');
-if ( $next ) $edit_text = __('Back');
+if ( $next != 'edit.php' ) $edit_text = __('Back');
 $load_url = $user_id ? 'load_text.php?user_id=' . $user_id : 'load_text.php';
 
 $menu = new \Tsugi\UI\MenuSet();
