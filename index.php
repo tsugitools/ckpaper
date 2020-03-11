@@ -71,6 +71,12 @@ $OUTPUT->flashMessages();
 
 SettingsForm::start();
 SettingsForm::checkbox('sendgrade',__('Send a grade'));
+?>
+<p>This tool uses technology from the
+<a href="http://annotatorjs.org/" target="_blank">Annotator JS</a> project and
+<a href="https://ckeditor.com/" target="_blank">CKEditor 5.0</a>.
+</p>
+<?php
 SettingsForm::done();
 SettingsForm::end();
 
