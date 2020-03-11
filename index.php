@@ -60,7 +60,7 @@ if ( $LAUNCH->user->instructor ) {
     $menu->addRight(__('Settings'), '#', /* push */ false, SettingsForm::attr());
 }
 
-$old_content = $LAUNCH->result->getJsonKey('content', '');
+$old_content = $LAUNCH->result->getJsonKeyForUser('content', '', $user_id);
 
 // Render view
 $OUTPUT->header();
