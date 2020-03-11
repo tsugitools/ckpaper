@@ -9,6 +9,7 @@ use \Tsugi\Core\LTIX;
 use \Tsugi\Core\Settings;
 use \Tsugi\UI\SettingsForm;
 use \Tsugi\UI\Annotate;
+use \Tsugi\Core\Annotate as AnnotateModel;
 
 // No parameter means we require CONTEXT, USER, and LINK
 $LAUNCH = LTIX::requireData();
@@ -22,13 +23,27 @@ if ( $user_id && ! $LAUNCH->user->instructor ) {
 if ( ! $user_id ) $user_id = $LAUNCH->user->id;
 
 $inst_note = $LAUNCH->result->getNote($user_id );
+$annotations = AnnotateModel::loadAnnotations($LAUNCH, $user_id);
+
+// Load and parse the old JSON
+$json = $LAUNCH->result->getJsonForUser($user_id);
+$json = json_decode($json);
+if ( $json == null ) $json = new \stdClass();
+$lock = isset($json->lock) && $json->lock;
 
 $edit_text = __('Edit');
 if ( $next != 'edit.php' ) $edit_text = __('Back');
 $load_url = $user_id ? 'load_text.php?user_id=' . $user_id : 'load_text.php';
 
 $menu = new \Tsugi\UI\MenuSet();
-$menu->addLeft($edit_text, $next);
+if ( $lock && ! $LAUNCH->user->instructor ) {
+    $menu->addLeft(__('Entry Locked'), false);
+} else {
+   $menu->addLeft($edit_text, $next);
+}
+if ( count($annotations) > 0 ) {
+    $menu->addRight(__('Annotations:').' '.count($annotations), false);
+}
 
 if ( $LAUNCH->user->instructor ) {
     $submenu = new \Tsugi\UI\Menu();
