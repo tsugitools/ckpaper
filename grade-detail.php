@@ -28,7 +28,8 @@ $OUTPUT->flashMessages();
 GradeUtil::gradeShowInfo($row);
 
 if ( $annotations ) {
-    echo('<p><a href="annotate.php?user_id='.$user_id.'">');
+    $next = "grade-detail.php?user_id=".$user_id;
+    echo('<p><a href="index.php?user_id='.$user_id.'&next='.urlencode($next).'">');
     echo(__('Annotate'));
     echo("</a><p>\n");
 }

@@ -5,58 +5,51 @@ require_once "../config.php";
 // http://do1.dr-chuck.com/tsugi/phpdoc/
 
 use \Tsugi\Util\U;
-use \Tsugi\Util\Net;
 use \Tsugi\Core\LTIX;
 use \Tsugi\Core\Settings;
 use \Tsugi\UI\SettingsForm;
+use \Tsugi\UI\Annotate;
 
 // No parameter means we require CONTEXT, USER, and LINK
 $LAUNCH = LTIX::requireData();
 
-// If settings were updated
-if ( SettingsForm::handleSettingsPost() ) {
-    header( 'Location: '.addSession('index.php') ) ;
-    return;
+$next = U::safe_href(U::get($_GET, 'next', 'edit.php'));
+$user_id = U::safe_href(U::get($_GET, 'user_id'));
+if ( $user_id && ! $LAUNCH->user->instructor ) {
+    http_response_code(404);
+    die('Not authorized');
 }
+if ( ! $user_id ) $user_id = $LAUNCH->user->id;
 
-// Handle Post Data
-$p = $CFG->dbprefix;
-$old_content = $LAUNCH->result->getJsonKey('content', '');
-
-if ( U::get($_POST, 'content') ) {
-    $LAUNCH->result->setJsonKey('content', U::get($_POST, 'content') );
-    $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
-            array(':LI' => $LINK->id)
-    );
-    $_SESSION['success'] = 'Updated';
-    header( 'Location: '.addSession('index.php') ) ;
-    return;
-} 
+$edit_text = __('Edit');
+if ( $next ) $edit_text = __('Back');
+$load_url = $user_id ? 'load_text.php?user_id=' . $user_id : 'load_text.php';
 
 $menu = new \Tsugi\UI\MenuSet();
-$menu->addLeft(__('Annotations'), 'annotate');
+$menu->addLeft($edit_text, $next);
 
-if ( $USER->instructor ) {
+if ( $LAUNCH->user->instructor ) {
     $submenu = new \Tsugi\UI\Menu();
     $submenu->addLink(__('Student Data'), 'grades');
     $submenu->addLink(__('Settings'), '#', /* push */ false, SettingsForm::attr());
     if ( $CFG->launchactivity ) {
         $submenu->addLink(__('Analytics'), 'analytics');
     }
-    $menu->addRight(__('Instructor'), $submenu);
+    $menu->addRight(__('Help'), '#', /* push */ false, 'data-toggle="modal" data-target="#helpModal"');
+    $menu->addRight(__('Instructor'), $submenu, /* push */ false);
 } else {
+    $menu->addRight(__('Help'), '#', /* push */ false, 'data-toggle="modal" data-target="#helpModal"');
     $menu->addRight(__('Settings'), '#', /* push */ false, SettingsForm::attr());
 }
 
 
+$old_content = $LAUNCH->result->getJsonKey('content', '');
 
 // Render view
 $OUTPUT->header();
-// https://github.com/jitbit/HtmlSanitizer
-
+echo(Annotate::header());
 $OUTPUT->bodyStart();
 $OUTPUT->topNav($menu);
-$OUTPUT->welcomeUserCourse();
 $OUTPUT->flashMessages();
 
 SettingsForm::start();
@@ -65,64 +58,37 @@ SettingsForm::checkbox('grade',__('Send a grade'));
 SettingsForm::done();
 SettingsForm::end();
 
+$OUTPUT->helpModal("Annotation Tool",
+    "You can edit and annotate formatted text with this tool.  Your teacher also annotate your document.
+    To annotate, simply highlight text and an edit dialog will pop up so you can add, edit, or delete a comment.");
+
+if ( strlen($old_content) < 1 ) {
+    $OUTPUT->welcomeUserCourse();
+    echo("<p>Please edit your submission.</p>\n");
+    $OUTPUT->footer();
+    return;
+}
 ?>
     <div id="spinner"><img src="<?= $OUTPUT->getSpinnerUrl() ?>"/></div>
-    <div id="editor_div" style="display: none;">
-    <form method="post">
-        <textarea name="content" id="editor">
-        </textarea>
-        <p><input type="submit" value="Submit"></p>
-    </form>
+    <div id="output_div" style="display: none;">
     </div>
 <?php
 $OUTPUT->footerStart();
+echo(Annotate::footer($user_id));
+// https://github.com/jitbit/HtmlSanitizer
 ?>
 <script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
-<script src="https://cdn.ckeditor.com/ckeditor5/16.0.0/classic/ckeditor.js"></script>
 <script type="text/javascript">
-ClassicEditor.defaultConfig = {
-    toolbar: {
-        items: [
-            'heading',
-            '|',
-            'bold',
-            'italic',
-            'link',
-            'bulletedList',
-            'numberedList',
-            // 'imageUpload',
-            'blockQuote',
-            'insertTable',
-            'mediaEmbed',
-            'undo',
-            'redo'
-        ]
-    },
-    
-}
-
 $(document).ready( function () {
-    $.get('<?= addSession('load_text.php') ?>', function(data) {
-      console.log(data);
+    $.get('<?= addSession($load_url) ?>', function(data) {
       var html = HtmlSanitizer.SanitizeHtml(data);
-      console.log(html);
-      $('#editor').html(html);
       $('#output_div').html(html);
-      ClassicEditor
-            .create( document.querySelector( '#editor' ) ,
-                {
-                }
-            ).then(editor => { 
-                // editor.isReadOnly = true;
-                $('#spinner').hide();
-                $('#editor_div').show();
-            } ).catch( error => {
-                console.error( error );
-            } );
+      $('#spinner').hide();
+      $('#output_div').show();
+      tsugiStartAnnotation('#output_div');
     })
   }
 );
 </script>
 <?php
 $OUTPUT->footerEnd();
-
