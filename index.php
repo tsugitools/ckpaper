@@ -17,7 +17,7 @@ $LAUNCH = LTIX::requireData();
 $next = U::safe_href(U::get($_GET, 'next', 'edit.php'));
 $user_id = U::safe_href(U::get($_GET, 'user_id'));
 if ( $user_id && ! $LAUNCH->user->instructor ) {
-    http_response_code(404);
+    http_response_code(403);
     die('Not authorized');
 }
 if ( ! $user_id ) $user_id = $LAUNCH->user->id;
