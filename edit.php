@@ -15,7 +15,8 @@ $LAUNCH = LTIX::requireData();
 
 // If settings were updated
 if ( SettingsForm::handleSettingsPost() ) {
-    header( 'Location: '.addSession('index.php') ) ;
+    $_SESSION["success"] = "Settings updated.";
+    header( 'Location: '.addSession('edit.php') ) ;
     return;
 }
 
@@ -52,6 +53,17 @@ $OUTPUT->header();
 $OUTPUT->bodyStart();
 $OUTPUT->topNav($menu);
 $OUTPUT->flashMessages();
+
+SettingsForm::start();
+SettingsForm::checkbox('sendgrade',__('Send a grade'));
+?>
+    <p>This tool uses technology from the
+        <a href="http://annotatorjs.org/" target="_blank">Annotator JS</a> project and
+        <a href="https://ckeditor.com/" target="_blank">CKEditor 5.0</a>.
+    </p>
+<?php
+SettingsForm::done();
+SettingsForm::end();
 
 ?>
     <div id="spinner"><img src="<?= $OUTPUT->getSpinnerUrl() ?>"/></div>

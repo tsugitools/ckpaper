@@ -14,6 +14,13 @@ use \Tsugi\Core\Annotate as AnnotateModel;
 // No parameter means we require CONTEXT, USER, and LINK
 $LAUNCH = LTIX::requireData();
 
+// If settings were updated
+if ( SettingsForm::handleSettingsPost() ) {
+    $_SESSION["success"] = "Settings updated.";
+    header( 'Location: '.addSession('index.php') ) ;
+    return;
+}
+
 $next = U::safe_href(U::get($_GET, 'next', 'edit.php'));
 $user_id = U::safe_href(U::get($_GET, 'user_id'));
 if ( $user_id && ! $LAUNCH->user->instructor ) {
