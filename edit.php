@@ -25,9 +25,6 @@ $old_content = $LAUNCH->result->getJsonKey('content', '');
 
 if ( count($_POST) > 0 ) {
     $LAUNCH->result->setJsonKey('content', U::get($_POST, 'content') );
-    $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
-            array(':LI' => $LINK->id)
-    );
     $_SESSION['success'] = 'Updated';
     header( 'Location: '.addSession('index.php') ) ;
     return;
