@@ -11,6 +11,8 @@ use \Tsugi\UI\SettingsForm;
 use \Tsugi\UI\Annotate;
 use \Tsugi\Core\Annotate as AnnotateModel;
 
+require_once "strlen.php";
+
 // No parameter means we require CONTEXT, USER, and LINK
 $LAUNCH = LTIX::requireData();
 
@@ -62,7 +64,7 @@ if ( $LAUNCH->user->instructor ) {
     $menu->addRight(__('Help'), '#', /* push */ false, 'data-toggle="modal" data-target="#helpModal"');
     $menu->addRight(__('Instructor'), $submenu, /* push */ false);
 } else {
-    if ( strlen($inst_note) > 0 ) $menu->addRight(__('Note'), '#', /* push */ false, 'data-toggle="modal" data-target="#noteModal"');
+    if ( U__strlen($inst_note) > 0 ) $menu->addRight(__('Note'), '#', /* push */ false, 'data-toggle="modal" data-target="#noteModal"');
     $menu->addRight(__('Help'), '#', /* push */ false, 'data-toggle="modal" data-target="#helpModal"');
     $menu->addRight(__('Settings'), '#', /* push */ false, SettingsForm::attr());
 }
@@ -91,11 +93,11 @@ $OUTPUT->helpModal("Annotation Tool",
     "You can edit and annotate formatted text with this tool.  Your teacher can also annotate your document.
     To annotate, simply highlight text and an edit dialog will pop up so you can add, edit, or delete a comment.");
 
-if ( strlen($inst_note) > 0 ) {
+if ( U__strlen($inst_note) > 0 ) {
     echo($OUTPUT->modalString(__("Instructor Note"), htmlentities($inst_note), "noteModal"));
 }
 
-if ( strlen($old_content) < 1 ) {
+if ( U__strlen($old_content) < 1 ) {
     $OUTPUT->welcomeUserCourse();
     echo("<p>Please edit your submission.</p>\n");
     $OUTPUT->footer();
