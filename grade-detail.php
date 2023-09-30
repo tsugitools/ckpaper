@@ -32,8 +32,8 @@ $content = $LAUNCH->result->getJsonKeyForUser('content', '', $user_id);
 
 // Load and parse the old JSON
 $json = $LAUNCH->result->getJsonForUser($user_id);
-$json = json_decode($json);
-if ( $json == null ) $json = new \stdClass();
+if ( is_string($json) ) $json = json_decode($json);
+if ( ! is_object($json) ) $json = new \stdClass();
 
 $old_lock = isset($json->lock) && $json->lock;
 
