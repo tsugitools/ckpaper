@@ -55,7 +55,7 @@ $OUTPUT->topNav($menu);
 $OUTPUT->flashMessages();
 
 SettingsForm::start();
-SettingsForm::checkbox('sendgrade',__('Send a grade'));
+// SettingsForm::checkbox('sendgrade',__('Send a grade'));
 ?>
     <p>This tool uses technology from the
         <a href="http://annotatorjs.org/" target="_blank">Annotator JS</a> project and

@@ -49,7 +49,7 @@ $gradesurl = Table::makeUrl('grades.php', $getparms);
 if ( isset($_POST['instSubmit']) || isset($_POST['instSubmitAdvance']) ) {
 
     $percent = U::get($_POST, 'percent');
-    if ( U__strlen($percent) == 0 || $percent === null ) {
+    if ( U::strlen($percent) == 0 || $percent === null ) {
         $percent = null;
     } else if ( is_numeric($percent) ) {
         $percent = $percent + 0;
@@ -67,7 +67,7 @@ if ( isset($_POST['instSubmit']) || isset($_POST['instSubmitAdvance']) ) {
     $debug_log = array();
     $status = LTIX::gradeSend($computed_grade, $result, $debug_log); // This is the slow bit
     if ( $status === true ) {
-        if ( U__strlen($success) > 0 ) $success .= ', ';
+        if ( U::strlen($success) > 0 ) $success .= ', ';
         $success .= 'Grade submitted to server';
     } else {
         error_log("Problem sending grade ".$status);
@@ -78,7 +78,7 @@ if ( isset($_POST['instSubmit']) || isset($_POST['instSubmitAdvance']) ) {
     $update_json = false;
     if ( U::get($_POST, 'reset') == 'on' ) {
         $json->annotations = array();
-        if ( U__strlen($success) > 0 ) $success .= ', ';
+        if ( U::strlen($success) > 0 ) $success .= ', ';
         $success .= 'Annotations reset';
         $update_json = true;
     }
@@ -86,7 +86,7 @@ if ( isset($_POST['instSubmit']) || isset($_POST['instSubmitAdvance']) ) {
     $new_lock = U::get($_POST, 'lock') == 'on';
     if ( $new_lock != $old_lock ) {
         $json->lock = $new_lock;
-        if ( U__strlen($success) > 0 ) $success .= ', ';
+        if ( U::strlen($success) > 0 ) $success .= ', ';
         $success .= $new_lock ? 'Assignment locked' : 'Assignment unlocked';
         $update_json = true;
     }
@@ -99,7 +99,7 @@ if ( isset($_POST['instSubmit']) || isset($_POST['instSubmitAdvance']) ) {
     $inst_note = U::get($_POST, 'inst_note');
     $LAUNCH->result->setNote(U::get($_POST, 'inst_note'), $user_id );
 
-    if ( U__strlen($success) > 0 ) $_SESSION['success'] = $success;
+    if ( U::strlen($success) > 0 ) $_SESSION['success'] = $success;
 
     header( 'Location: '.addSession($gradeurl) ) ;
     return;
@@ -120,7 +120,7 @@ GradeUtil::gradeShowInfo($row, false);
 
 echo("<p>Annotation count: ".count($annotations)."</p>\n");
 
-if ( U__strlen($content) > 0 ) {
+if ( U::strlen($content) > 0 ) {
     $next = Table::makeUrl('grade-detail.php', $getparms);
     echo('<p><a href="index.php?user_id='.$user_id.'&next='.urlencode($next).'">');
     echo(__('View / Annotate Submission'));
@@ -152,7 +152,7 @@ echo('<label for="reset">Reset Annotations:</label>
 
 echo('<label for="inst_note">Instructor Note To Student</label><br/>
       <textarea name="inst_note" id="inst_note" style="width:60%" rows="5">');
-echo(htmlentities($inst_note));
+echo(htmlentities($inst_note??''));
 echo('</textarea><br/>
       <input type="submit" name="instSubmit" value="Update" class="btn btn-primary">');
 
