@@ -26,6 +26,7 @@ $old_content = $LAUNCH->result->getJsonKey('content', '');
 
 if ( count($_POST) > 0 ) {
     $LAUNCH->result->setJsonKey('content', U::get($_POST, 'content') );
+    $LAUNCH->result->notifyReadyToGrade();
     $_SESSION['success'] = 'Updated';
     header( 'Location: '.addSession('index.php') ) ;
     return;

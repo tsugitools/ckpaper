@@ -23,6 +23,14 @@ $REGISTER_LTI2 = array(
         */
     ),
     "video" => "https://www.youtube.com/watch?v=n2qz6XpxZ1Q",
+    "submissionReview" => array(
+        "reviewableStatus" => array("InProgress", "Submitted", "Completed"),
+        "label" => "Annotator",
+        "url" => "grade-detail.php",  // A relative URL in this context
+        "custom" => array(
+            "review_towel" => "42",
+        ),
+    ),
     "screen_shots" => array(
         "store/screen-01.png",
         "store/screen-02.png",
