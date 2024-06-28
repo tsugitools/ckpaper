@@ -9,7 +9,7 @@ use \Tsugi\Core\Result;
 use \Tsugi\Core\LTIX;
 use \Tsugi\Grades\GradeUtil;
 
-session_start();
+$LAUNCH = LTIX::requireData();
 
 $user_id = U::safe_href(U::get($_REQUEST, 'user_id'));
 
