@@ -3,6 +3,7 @@ require_once "../config.php";
 \Tsugi\Core\LTIX::getConnection();
 
 use \Tsugi\Util\U;
+use \Tsugi\Util\LTI13;
 use \Tsugi\UI\Table;
 use \Tsugi\Core\Annotate;
 use \Tsugi\Core\Result;
@@ -32,7 +33,6 @@ unset($getparms['resend']);
 $self_url = addSession('grade.php?user_id='.$user_id);
 
 // Get the user's grade data also checks session
-// and sets $LAUNCH
 $row = GradeUtil::gradeLoad($user_id);
 
 $annotations = Annotate::loadAnnotations($LAUNCH, $user_id);
@@ -70,10 +70,20 @@ if ( isset($_POST['instSubmit']) || isset($_POST['instSubmitAdvance']) ) {
 
     $success = '';
 
+    $inst_note = U::get($_POST, 'inst_note');
+
     $result = Result::lookupResultBypass($user_id);
     $result['grade'] = -1; // Force resend
     $debug_log = array();
-    $status = LTIX::gradeSend($computed_grade, $result, $debug_log); // This is the slow bit
+    $extra13 = array(
+        LTI13::ACTIVITY_PROGRESS => LTI13::ACTIVITY_PROGRESS_COMPLETED,
+        LTI13::GRADING_PROGRESS => LTI13::GRADING_PROGRESS_FULLYGRADED,
+    );
+    if ( is_string($inst_note) && strlen($inst_note) > 1 ) {
+        $extra13[LTI13::LINEITEM_COMMENT] = $inst_note;
+    }
+
+    $status = $LAUNCH->result->gradeSend($computed_grade, $result, $debug_log, $extra13);
     if ( $status === true ) {
         if ( U::strlen($success) > 0 ) $success .= ', ';
         $success .= 'Grade submitted to server';
